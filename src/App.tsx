@@ -1,5 +1,23 @@
-const App = () => {
-  return <div className="font-bold">Hello, world!</div>;
-};
+import { createBrowserRouter, Navigate } from "react-router";
+import { RouterProvider } from "react-router/dom";
+import { Dashboard } from "@/pages/Dashboard";
+import { Practice } from "@/pages/Practice";
 
-export default App;
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Navigate to="/dashboard" replace />,
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
+  },
+  {
+    path: "/practice",
+    element: <Practice />,
+  },
+]);
+
+export const App = () => {
+  return <RouterProvider router={router} />;
+};
