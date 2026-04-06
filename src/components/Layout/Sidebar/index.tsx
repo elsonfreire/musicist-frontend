@@ -18,13 +18,18 @@ export const Sidebar = observer(() => {
   return (
     <Drawer
       variant="permanent"
+      sx={{
+        "& .MuiDrawer-paper": {
+          borderRight: "none",
+        },
+      }}
       slotProps={{
         paper: {
           className: `transition-all duration-300 ${isDrawerOpen ? "w-56" : "w-12"}`,
         },
       }}
     >
-      <div className="flex flex-col justify-between overflow-x-hidden h-full bg-slate-900 px-2">
+      <div className="flex flex-col justify-between overflow-x-hidden h-full bg-slate-900 px-2 pt-14">
         <nav className="mt-2">
           <NavLink
             to="/dashboard"
