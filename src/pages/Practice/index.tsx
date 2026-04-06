@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Content } from "@/components/Layout/Content";
 import { 
   WhatshotOutlined, 
@@ -6,47 +6,149 @@ import {
   DeleteOutline, 
   AddOutlined 
 } from "@mui/icons-material";
+import { useNavigate } from "react-router";
+
+import type { PracticeLog } from "./types";
 
 const instruments = ["Guitarra", "Piano", "Baixo", "Bateria", "Violão", "Ukulele", "Violino", "Outro"];
 
-interface PracticeLog {
-  id: number;
-  instrument: string;
-  duration: number;
-  date: string;
-  notes?: string;
-}
-
 export const Practice = () => {
+  const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_REACT_APP_API;
+
   const [logs, setLogs] = useState<PracticeLog[]>([]);
+  const [currentStreak, setCurrentStreak] = useState(0); // Estado para guardar a ofensiva do banco
   const [instrument, setInstrument] = useState("Guitarra");
   const [duration, setDuration] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [notes, setNotes] = useState("");
-  const currentStreak = 0; 
-  const weeklyMinutes = logs.reduce((acc, log) => acc + log.duration, 0);
-  const avgPerDay = Math.round(weeklyMinutes / 7) || 0;
+  
+  useEffect(() => {
+    fetchLogs();
+    fetchStreak(); 
+  }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const fetchStreak = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const payloadBase64 = token.split('.')[1]; 
+      const tokenData = JSON.parse(atob(payloadBase64)); 
+      const userId = tokenData.userId;
+
+      const response = await fetch(`${API_URL}/users/${userId}/streak`, {
+        headers: { 
+          "Authorization": `Bearer ${token}` 
+        }
+      });
+
+      if (response.ok) {
+        const streakData = await response.json();
+        setCurrentStreak(streakData.currentStreak || 0);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar a ofensiva:", error);
+    }
+  };
+
+  const fetchLogs = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/sessions`, {
+        headers: { 
+          "Authorization": `Bearer ${token}` 
+        },
+      });
+
+      if (response.status === 403) {
+        localStorage.removeItem("token");
+        navigate("/login");
+        return;
+      }
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        const formattedLogs = data.map((log: any) => ({
+          id: log.id,
+          instrument: log.instrument || "Guitarra",
+          duration: log.durationMinutes || log.duration || 0,
+          date: log.date,
+          notes: log.notes
+        }));
+        
+        setLogs(formattedLogs.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+      }
+    } catch (error) {
+      console.error("Erro ao buscar sessões:", error);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!duration || !instrument) return;
     
-    const newLog: PracticeLog = { 
-      id: Date.now(), 
-      instrument, 
-      duration: parseInt(duration), 
-      date, 
-      notes: notes || undefined 
+    const token = localStorage.getItem("token");
+    const payload = {
+      instrument: instrument, 
+      durationMinutes: parseInt(duration),
+      date: date,
+      notes: notes || undefined
     };
-    
-    setLogs([newLog, ...logs]);
-    setDuration("");
-    setNotes("");
+
+    try {
+      const response = await fetch(`${API_URL}/sessions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        fetchLogs();
+        fetchStreak(); 
+        setDuration("");
+        setNotes("");
+      }
+    } catch (error) {
+      console.error("Erro ao salvar sessão:", error);
+    }
   };
 
-  const deleteLog = (id: number) => {
-    setLogs(logs.filter((log) => log.id !== id));
+  const deleteLog = async (id: number) => {
+    const token = localStorage.getItem("token");
+    
+    try {
+      const response = await fetch(`${API_URL}/sessions/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+      });
+
+      if (response.ok) {
+        setLogs(logs.filter((log) => log.id !== id));
+        fetchStreak(); 
+      }
+    } catch (error) {
+      console.error("Erro ao deletar sessão:", error);
+    }
   };
+
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  
+  const logsThisWeek = logs.filter(log => new Date(log.date) >= sevenDaysAgo);
+  const weeklyMinutes = logsThisWeek.reduce((acc, log) => acc + log.duration, 0);
+  const avgPerDay = Math.round(weeklyMinutes / 7) || 0;
 
   return (
     <Content>
@@ -80,7 +182,7 @@ export const Practice = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">         
             <div className="bg-slate-800 rounded-lg p-4 md:p-6">
               <h2 className="text-base md:text-lg font-display font-semibold mb-4 flex items-center gap-2 text-slate-200">
                 <AddOutlined className="text-orange-600" fontSize="small" /> Registrar Sessão
@@ -143,7 +245,7 @@ export const Practice = () => {
                 {logs.length === 0 ? (
                   <p className="text-slate-400 text-sm">Nenhuma sessão registrada ainda.</p>
                 ) : (
-                  logs.slice(0, 20).map((log) => (
+                  logs.map((log) => (
                     <div key={log.id} className="flex items-center justify-between p-2.5 md:p-3 rounded-lg bg-slate-900">
                       <div className="flex items-center gap-2 md:gap-3 min-w-0">
                         <div className="h-8 w-8 md:h-9 md:w-9 rounded-lg bg-amber-900 flex items-center justify-center text-orange-500 text-xs md:text-sm font-bold shrink-0">
