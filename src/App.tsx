@@ -1,12 +1,13 @@
-import { createBrowserRouter, Navigate } from "react-router";
+import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import { Dashboard } from "@/pages/Dashboard";
 import { Practice } from "@/pages/Practice";
+import { Login } from "@/pages/Login";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="/dashboard" replace />,
+    element: <Login />,
   },
   {
     path: "/dashboard",
