@@ -10,7 +10,15 @@ import { useNavigate } from "react-router";
 
 import type { PracticeLog } from "./types";
 
-const instruments = ["Guitarra", "Piano", "Baixo", "Bateria", "Violão", "Ukulele", "Violino", "Outro"];
+const instruments: Record<string, string> = {
+  "Guitarra": "electric_guitar",
+  "Piano": "piano",
+  "Baixo": "bass",
+  "Bateria": "drums",
+  "Violão": "guitar",
+  "Violino": "violin", 
+  "Outro": "other"
+}
 
 export const Practice = () => {
   const navigate = useNavigate();
@@ -77,7 +85,7 @@ export const Practice = () => {
         
         const formattedLogs = data.map((log: any) => ({
           id: log.id,
-          instrument: log.instrument || "Guitarra",
+          instrument: Object.keys(instruments).find((key) => instruments[key] === log.instrument) || "Other",
           duration: log.durationMinutes || log.duration || 0,
           date: log.date,
           notes: log.notes
@@ -96,7 +104,7 @@ export const Practice = () => {
     
     const token = localStorage.getItem("token");
     const payload = {
-      instrument: instrument, 
+      instrument: instruments[instrument], 
       durationMinutes: parseInt(duration),
       date: date,
       notes: notes || undefined
@@ -195,7 +203,7 @@ export const Practice = () => {
                     onChange={(e) => setInstrument(e.target.value)}
                     className="w-full bg-slate-900 text-slate-300 border-none rounded-md p-2.5 focus:outline-none focus:ring-2 focus:ring-orange-600"
                   >
-                    {instruments.map((i) => <option key={i} value={i}>{i}</option>)}
+                    {Object.keys(instruments).map((i) => <option key={i} value={i}>{i}</option>)}
                   </select>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
