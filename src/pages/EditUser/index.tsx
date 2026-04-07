@@ -36,7 +36,7 @@ export function EditUser() {
       const data: IUser = await response.json();
       setUser(data);
     } catch (error) {
-      console.error("Erro ao buscar a ofensiva:", error);
+      console.error("Erro ao buscar informações do usuário:", error);
     }
   };
 
