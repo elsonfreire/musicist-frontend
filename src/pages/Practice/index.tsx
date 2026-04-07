@@ -11,6 +11,15 @@ import { useNavigate } from "react-router";
 import type { PracticeLog } from "./types";
 
 const instruments = ["Guitarra", "Piano", "Baixo", "Bateria", "Violão", "Ukulele", "Violino", "Outro"];
+const instrumentsMap: Record<string, string> = {
+  "Guitarra": "electric_guitar",
+  "Piano": "piano",
+  "Baixo": "bass",
+  "Bateria": "drums",
+  "Violão": "guitar",
+  "Violino": "violin", 
+  "Outro": "other"
+}
 
 export const Practice = () => {
   const navigate = useNavigate();
@@ -77,7 +86,7 @@ export const Practice = () => {
         
         const formattedLogs = data.map((log: any) => ({
           id: log.id,
-          instrument: log.instrument || "Guitarra",
+          instrument: Object.keys(instrumentsMap).find((key) => instrumentsMap[key] === log.instrument) || "Other",
           duration: log.durationMinutes || log.duration || 0,
           date: log.date,
           notes: log.notes
@@ -96,7 +105,7 @@ export const Practice = () => {
     
     const token = localStorage.getItem("token");
     const payload = {
-      instrument: instrument, 
+      instrument: instrumentsMap[instrument], 
       durationMinutes: parseInt(duration),
       date: date,
       notes: notes || undefined
