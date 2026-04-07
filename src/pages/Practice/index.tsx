@@ -17,7 +17,7 @@ export const Practice = () => {
   const API_URL = import.meta.env.VITE_REACT_APP_API;
 
   const [logs, setLogs] = useState<PracticeLog[]>([]);
-  const [currentStreak, setCurrentStreak] = useState(0); // Estado para guardar a ofensiva do banco
+  const [currentStreak, setCurrentStreak] = useState(0); 
   const [instrument, setInstrument] = useState("Guitarra");
   const [duration, setDuration] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
