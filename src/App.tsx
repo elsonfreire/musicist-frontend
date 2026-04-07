@@ -4,6 +4,7 @@ import { Dashboard } from "@/pages/Dashboard";
 import { Practice } from "@/pages/Practice";
 import { Register } from "@/pages/Register";
 import { Login } from "@/pages/Login";
+import { EditUser } from "./pages/EditUser";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />
+  },
+  {
+    path: "/edit-user",
+    element: <EditUser />
   },
   {
     path: "/dashboard",
