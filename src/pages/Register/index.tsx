@@ -43,7 +43,7 @@ export const Register = () => {
         throw new Error("Erro na requisição");
       }
 
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       setIsLoading(false);
       console.error(error);
@@ -181,7 +181,7 @@ export const Register = () => {
         <a
           href="#"
           className="mt-4 text-slate-400"
-          onClick={() => navigate("/login")}
+          onClick={() => navigate("/")}
         >
           Já tem conta? Entrar
         </a>
