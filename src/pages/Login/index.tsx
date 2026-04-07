@@ -20,16 +20,19 @@ export const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_REACT_APP_API}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${import.meta.env.VITE_REACT_APP_API}/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
         },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Erro na requisição");
@@ -150,7 +153,11 @@ export const Login = () => {
             </button>
           )}
         </form>
-        <a href="#" className="mt-4 text-slate-400">
+        <a
+          href="#"
+          className="mt-4 text-slate-400"
+          onClick={() => navigate("/register")}
+        >
           Não tem conta? Criar
         </a>
       </div>
