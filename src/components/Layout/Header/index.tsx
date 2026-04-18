@@ -5,8 +5,9 @@ import Popover from "@mui/material/Popover";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import { useNavigate } from "react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Divider } from "@mui/material";
+import { userState } from "@/state/UserState";
 
 export const Header = observer(() => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -23,6 +24,10 @@ export const Header = observer(() => {
   const open = Boolean(anchorEl);
   const id = open ? "header-popover" : undefined;
 
+  useEffect(() => {
+    userState.fetchUser();
+  }, []);
+
   return (
     <div
       className={`h-14 flex items-center justify-between px-4 bg-slate-800  ${`${navigationState.isSidebarOpen ? "ml-56" : "ml-12"}`} font-bold text-lg font-display text-orange-600`}
@@ -32,9 +37,13 @@ export const Header = observer(() => {
         <MusicNoteOutlinedIcon />
         Musicist
       </div>
-      <button className="cursor-pointer" aria-describedby={id} onClick={handleClick}>
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-900 text-primary text-xs font-bold">
-          TD
+      <button
+        className="cursor-pointer"
+        aria-describedby={id}
+        onClick={handleClick}
+      >
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#5a3b3b] text-orange-400 text-primary text-xs font-bold">
+          {userState.user?.username.slice(0, 2).toUpperCase() || ""}
         </span>
       </button>
       <Popover
@@ -55,7 +64,10 @@ export const Header = observer(() => {
             <AccountCircleOutlinedIcon fontSize="small" /> Meu perfil
           </button>
           <Divider className="w-full bg-[rgb(45,57,83)]" />
-          <button className="text-red-500 cursor-pointer px-2 py-1.5 flex justify-start items-center gap-1.5 hover:opacity-80" onClick={() => navigate("/")}>
+          <button
+            className="text-red-500 cursor-pointer px-2 py-1.5 flex justify-start items-center gap-1.5 hover:opacity-80"
+            onClick={() => navigate("/")}
+          >
             <LogoutOutlinedIcon fontSize="small" /> Sair
           </button>
         </div>
