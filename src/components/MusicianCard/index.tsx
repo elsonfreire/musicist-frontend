@@ -3,7 +3,8 @@ import {
   LocalFireDepartmentOutlined, 
   PlaceOutlined, 
   MusicNoteOutlined, 
-  PersonAddOutlined 
+  PersonAddOutlined,
+  PersonRemoveOutlined 
 } from "@mui/icons-material";
 import type { UserResponse } from "@/pages/Community/types"; 
 
@@ -18,9 +19,10 @@ interface MusicianCardProps {
   user: UserResponse;
   score?: number;
   onAddFriend?: () => void;
+  onRemoveFriend?: () => void;
 }
 
-export const MusicianCard = ({ user, score, onAddFriend }: MusicianCardProps) => {
+export const MusicianCard = ({ user, score, onAddFriend, onRemoveFriend }: MusicianCardProps) => {
   return (
     <div className="bg-slate-800 rounded-lg p-4 md:p-5 flex flex-col justify-between h-full transition-colors hover:bg-slate-800/80 border border-slate-700/50">
       <div className="flex flex-col gap-3">
@@ -65,14 +67,25 @@ export const MusicianCard = ({ user, score, onAddFriend }: MusicianCardProps) =>
         </div>
       </div>
 
-      {onAddFriend && (
-        <button 
-          onClick={onAddFriend}
-          className="mt-4 w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-orange-600 text-slate-300 hover:text-white border border-slate-700 hover:border-orange-500 transition-colors py-2 rounded-md text-sm font-semibold"
-        >
-          <PersonAddOutlined fontSize="small" /> Adicionar
-        </button>
-      )}
+      <div className="mt-4 flex flex-col gap-2">
+        {onAddFriend && (
+          <button 
+            onClick={onAddFriend}
+            className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-orange-600 text-slate-300 hover:text-white border border-slate-700 hover:border-orange-500 transition-colors py-2 rounded-md text-sm font-semibold"
+          >
+            <PersonAddOutlined fontSize="small" /> Adicionar
+          </button>
+        )}
+
+        {onRemoveFriend && (
+          <button 
+            onClick={onRemoveFriend}
+            className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-red-900/40 text-slate-400 hover:text-red-400 border border-slate-700 hover:border-red-800 transition-colors py-2 rounded-md text-sm font-semibold"
+          >
+            <PersonRemoveOutlined fontSize="small" /> Desfazer Amizade
+          </button>
+        )}
+      </div>
     </div>
   );
 };

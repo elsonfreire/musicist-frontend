@@ -9,7 +9,7 @@ import {
   CloseOutlined
 } from "@mui/icons-material";
 
-import type { UserResponse, RecommendationResponse, FriendshipResponse } from "./types";
+import type { UserResponse, RecommendationResponse, FriendshipResponse } from "./types"; 
 import { MusicianCard } from "@/components/MusicianCard";
 
 export const Community = () => {
@@ -233,7 +233,11 @@ export const Community = () => {
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {friends.map((friend) => (
-                      <MusicianCard key={friend.id} user={friend} />
+                      <MusicianCard 
+                        key={friend.id} 
+                        user={friend} 
+                        onRemoveFriend={() => handleRemoveOrCancel(friend.id, 'friend')}
+                      />
                     ))}
                   </div>
                 )
