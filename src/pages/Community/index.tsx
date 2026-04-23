@@ -6,22 +6,11 @@ import {
   PeopleAltOutlined, 
   PersonAddOutlined, 
   CheckOutlined, 
-  CloseOutlined, 
-  PlaceOutlined, 
-  MusicNoteOutlined,
-  AccountCircleOutlined,
-  LocalFireDepartmentOutlined
+  CloseOutlined
 } from "@mui/icons-material";
 
-// Importando o novo tipo FriendshipResponse
 import type { UserResponse, RecommendationResponse, FriendshipResponse } from "./types";
-
-const levelColors: Record<string, string> = {
-  beginner: "bg-green-900/50 text-green-400",
-  intermediate: "bg-yellow-900/50 text-yellow-400",
-  advanced: "bg-orange-900/50 text-orange-400",
-  pro: "bg-red-900/50 text-red-400",
-};
+import { MusicianCard } from "@/components/MusicianCard";
 
 export const Community = () => {
   const navigate = useNavigate();
@@ -31,12 +20,10 @@ export const Community = () => {
   
   const [recommendations, setRecommendations] = useState<RecommendationResponse[]>([]);
   const [friends, setFriends] = useState<UserResponse[]>([]);
-  // Agora os states guardam a relação inteira (FriendshipResponse) para termos acesso ao friendshipId
   const [incoming, setIncoming] = useState<FriendshipResponse[]>([]);
   const [outgoing, setOutgoing] = useState<FriendshipResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Helper para pegar o ID do usuário logado a partir do token
   const getCurrentUserId = () => {
     const token = localStorage.getItem("token");
     if (!token) return null;
@@ -66,9 +53,8 @@ export const Community = () => {
 
     try {
       setLoading(true);
-      // Batendo nas rotas corretas baseadas no seu controller
       const [recsRes, friendsRes, requestsRes] = await Promise.all([
-        fetch(`${API_URL}/connections/recommendations`, { headers }), // Mantido (presumo que este não mudou)
+        fetch(`${API_URL}/connections/recommendations`, { headers }),
         fetch(`${API_URL}/users/${userId}/friends`, { headers }),
         fetch(`${API_URL}/users/${userId}/friends/requests`, { headers })
       ]);
@@ -82,7 +68,6 @@ export const Community = () => {
       if (recsRes.ok) setRecommendations(await recsRes.json());
       if (friendsRes.ok) setFriends(await friendsRes.json());
       
-      // Separando as requisições recebidas e enviadas localmente
       if (requestsRes.ok) {
         const allRequests: FriendshipResponse[] = await requestsRes.json();
         setIncoming(allRequests.filter(req => req.receiver.id === userId));
@@ -96,7 +81,35 @@ export const Community = () => {
     }
   };
 
-  // Aceitar usa PATCH e o friendshipId
+  const handleSendRequest = async (targetId: number, targetUser: UserResponse) => {
+    const token = localStorage.getItem("token");
+    const userId = getCurrentUserId();
+    
+    if (!token || !userId) return;
+
+    try {
+      const response = await fetch(`${API_URL}/users/${userId}/friends/requests/${targetId}`, {
+        method: 'POST',
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+
+      if (response.ok || response.status === 201) {
+        setRecommendations(prev => prev.filter(rec => rec.user.id !== targetId));
+        
+        const newOutgoingRequest: FriendshipResponse = {
+          id: Date.now(),
+          requester: { id: userId } as UserResponse, 
+          receiver: targetUser,
+          status: 'PENDING'
+        };
+        
+        setOutgoing(prev => [...prev, newOutgoingRequest]);
+      }
+    } catch (error) {
+      console.error("Erro ao enviar solicitação:", error);
+    }
+  };
+
   const handleAcceptRequest = async (friendshipId: number, newFriend: UserResponse) => {
     const token = localStorage.getItem("token");
     const userId = getCurrentUserId();
@@ -116,7 +129,6 @@ export const Community = () => {
     }
   };
 
-  // Recusar, Cancelar ou Remover Amigo usa DELETE e o ID do amigo
   const handleRemoveOrCancel = async (friendId: number, type: 'incoming' | 'outgoing' | 'friend') => {
     const token = localStorage.getItem("token");
     const userId = getCurrentUserId();
@@ -140,51 +152,6 @@ export const Community = () => {
       console.error("Erro ao remover/cancelar:", error);
     }
   };
-
-  // Componente interno para reuso do Card do Músico
-  const MusicianCard = ({ user, score }: { user: UserResponse, score?: number }) => (
-    <div className="bg-slate-800 rounded-lg p-4 md:p-5 flex flex-col gap-3 transition-colors hover:bg-slate-800/80 border border-slate-700/50">
-      <div className="flex justify-between items-start">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-slate-900 flex items-center justify-center text-orange-600 shrink-0 border border-slate-700">
-            <AccountCircleOutlined fontSize="medium" />
-          </div>
-          <div className="min-w-0">
-            <h3 className="font-display font-bold text-slate-200 truncate">@{user.username}</h3>
-            <p className="text-sm text-slate-400 capitalize truncate">{user.instrument}</p>
-          </div>
-        </div>
-        {score !== undefined && (
-          <div className="flex items-center gap-1 bg-orange-900/30 text-orange-500 px-2 py-1 rounded text-xs font-semibold border border-orange-800/50">
-            <LocalFireDepartmentOutlined fontSize="small" sx={{ fontSize: 14 }} />
-            {score}/10
-          </div>
-        )}
-      </div>
-
-      {user.bio && (
-        <p className="text-sm text-slate-400 line-clamp-2 mt-1">{user.bio}</p>
-      )}
-
-      <div className="flex flex-wrap gap-2 mt-2">
-        {user.city && (
-          <span className="flex items-center gap-1 text-[11px] px-2 py-1 rounded-md bg-slate-900 text-slate-300 border border-slate-700">
-            <PlaceOutlined sx={{ fontSize: 12 }} className="text-orange-600" /> {user.city}
-          </span>
-        )}
-        {user.favoriteGenre && (
-          <span className="flex items-center gap-1 text-[11px] px-2 py-1 rounded-md bg-slate-900 text-slate-300 border border-slate-700">
-            <MusicNoteOutlined sx={{ fontSize: 12 }} className="text-orange-600" /> {user.favoriteGenre}
-          </span>
-        )}
-        {user.level && (
-          <span className={`flex items-center gap-1 text-[11px] px-2 py-1 rounded-md border border-slate-700 ${levelColors[user.level.toLowerCase()] || 'bg-slate-900 text-slate-300'}`}>
-            {user.level}
-          </span>
-        )}
-      </div>
-    </div>
-  );
 
   return (
     <Content>
@@ -247,7 +214,12 @@ export const Community = () => {
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {recommendations.map((rec) => (
-                      <MusicianCard key={rec.user.id} user={rec.user} score={rec.matchScore} />
+                      <MusicianCard 
+                        key={rec.user.id} 
+                        user={rec.user} 
+                        score={rec.matchScore}
+                        onAddFriend={() => handleSendRequest(rec.user.id, rec.user)}
+                      />
                     ))}
                   </div>
                 )
@@ -269,7 +241,6 @@ export const Community = () => {
 
               {activeTab === "requests" && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Recebidas (incoming usa requester.id) */}
                   <div className="bg-slate-800 rounded-lg p-4 md:p-6 border border-slate-700">
                     <h2 className="text-base font-semibold mb-4 text-slate-200">
                       Recebidas ({incoming.length})
@@ -285,11 +256,9 @@ export const Community = () => {
                               <p className="text-xs text-slate-400 capitalize">{req.requester.instrument}</p>
                             </div>
                             <div className="flex gap-2 shrink-0">
-                              {/* Aceitar usa o friendshipId */}
                               <button onClick={() => handleAcceptRequest(req.id, req.requester)} className="bg-orange-600 hover:bg-orange-700 text-white p-1.5 rounded-md transition-colors">
                                 <CheckOutlined fontSize="small" />
                               </button>
-                              {/* Recusar usa o userId (requester.id) para deletar o vinculo */}
                               <button onClick={() => handleRemoveOrCancel(req.requester.id, 'incoming')} className="bg-slate-700 hover:bg-slate-600 text-slate-300 p-1.5 rounded-md transition-colors">
                                 <CloseOutlined fontSize="small" />
                               </button>
@@ -300,7 +269,6 @@ export const Community = () => {
                     </div>
                   </div>
 
-                  {/* Enviadas (outgoing usa receiver.id) */}
                   <div className="bg-slate-800 rounded-lg p-4 md:p-6 border border-slate-700">
                     <h2 className="text-base font-semibold mb-4 text-slate-200">
                       Enviadas ({outgoing.length})
