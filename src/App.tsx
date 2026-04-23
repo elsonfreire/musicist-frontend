@@ -4,8 +4,9 @@ import { Dashboard } from "@/pages/Dashboard";
 import { Practice } from "@/pages/Practice";
 import { Register } from "@/pages/Register";
 import { Login } from "@/pages/Login";
-import { EditUser } from "./pages/EditUser";
 import { Community } from "@/pages/Community";
+import { EditUser } from "@/pages/EditUser";
+import { Forum } from "@/pages/Forum";
 
 const router = createBrowserRouter([
   {
@@ -14,11 +15,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/register",
-    element: <Register />
+    element: <Register />,
   },
   {
     path: "/edit-user",
-    element: <EditUser />
+    element: <EditUser />,
   },
   {
     path: "/dashboard",
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: "/community",
     element: <Community />,
+  },
+  {
+    path: "/forum",
+    element: <Forum />,
   },
 ]);
 

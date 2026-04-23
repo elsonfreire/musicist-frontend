@@ -10,6 +10,7 @@ export type InstrumentType =
 export type LevelType = "beginner" | "intermediate" | "advanced" | "pro";
 
 export interface IUser {
+  id: string;
   email: string;
   username: string;
   instrument: string | null;
