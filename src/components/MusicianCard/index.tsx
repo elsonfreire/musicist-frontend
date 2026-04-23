@@ -15,6 +15,16 @@ const levelColors: Record<string, string> = {
   pro: "bg-red-900/50 text-red-400",
 };
 
+const getScoreStyles = (score: number) => {
+  if (score >= 8) {
+    return "bg-orange-500/20 text-orange-500 border-orange-500/50 shadow-[0_0_10px_rgba(249,115,22,0.15)]";
+  }
+  if (score >= 4) {
+    return "bg-yellow-500/20 text-yellow-500 border-yellow-500/50";
+  }
+  return "bg-slate-800 text-slate-400 border-slate-700";
+};
+
 interface MusicianCardProps {
   user: UserResponse;
   score?: number;
@@ -36,12 +46,15 @@ export const MusicianCard = ({ user, score, onAddFriend, onRemoveFriend }: Music
               <p className="text-sm text-slate-400 capitalize truncate">{user.instrument}</p>
             </div>
           </div>
+          
+          {/* 2. Aplicando a função dinâmica de cores aqui na tag do Score! */}
           {score !== undefined && (
-            <div className="flex items-center gap-1 bg-orange-900/30 text-orange-500 px-2 py-1 rounded text-xs font-semibold border border-orange-800/50">
+            <div className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold border transition-all ${getScoreStyles(score)}`}>
               <LocalFireDepartmentOutlined fontSize="small" sx={{ fontSize: 14 }} />
               {score}/10
             </div>
           )}
+          
         </div>
 
         {user.bio && (
