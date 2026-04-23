@@ -3,6 +3,7 @@ import {
   DashboardOutlined,
   DoubleArrowRounded,
   MusicNoteOutlined,
+  PeopleAltOutlined,
 } from "@mui/icons-material";
 import { observer } from "mobx-react";
 import { NavLink } from "react-router";
@@ -51,6 +52,15 @@ export const Sidebar = observer(() => {
           >
             <MusicNoteOutlined className="text-slate-300" fontSize="small" />
             {isDrawerOpen && <span className="text-sm">Prática</span>}
+          </NavLink>
+          <NavLink
+            to="/community"
+            className={({ isActive }) =>
+              `flex items-center w-full py-2 rounded-md text-slate-300 hover:bg-slate-800 ${isDrawerOpen ? "gap-3 px-3 justify-start" : "justify-center px-3 gap-2"} ${isActive && "bg-orange-600 text-white"}`
+            }
+          >
+            <PeopleAltOutlined className="text-slate-300" fontSize="small" />
+            {isDrawerOpen && <span className="text-sm">Comunidade</span>}
           </NavLink>
         </nav>
         {isDrawerOpen && <Divider className="text-slate-300" />}
