@@ -1,16 +1,16 @@
 export const INSTRUMENT_OPTIONS = [
-  { label: "Guitarra Elétrica", value: "electric_guitar" },
-  { label: "Violão", value: "guitar" },
-  { label: "Piano", value: "piano" },
-  { label: "Baixo", value: "bass" },
-  { label: "Bateria", value: "drums" },
-  { label: "Violino", value: "violin" },
-  { label: "Outro", value: "other" },
+  { label: "Guitarra Elétrica", value: "ELECTRIC_GUITAR" },
+  { label: "Violão", value: "GUITAR" },
+  { label: "Piano", value: "PIANO" },
+  { label: "Baixo", value: "BASS" },
+  { label: "Bateria", value: "DRUMS" },
+  { label: "Violino", value: "VIOLIN" },
+  { label: "Outro", value: "OTHER" },
 ];
 
 export const LEVEL_OPTIONS = [
-  { label: "Iniciante", value: "beginner" },
-  { label: "Intermediário", value: "intermediate" },
-  { label: "Avançado", value: "advanced" },
-  { label: "Profissional", value: "pro" },
+  { label: "Iniciante", value: "BEGINNER" },
+  { label: "Intermediário", value: "INTERMEDIATE" },
+  { label: "Avançado", value: "ADVANCED" },
+  { label: "Profissional", value: "PRO" },
 ];
