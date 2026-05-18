@@ -100,18 +100,22 @@ export const Dashboard = observer(() => {
       const streakData: StreakResponse = streakRes.ok ? await streakRes.json() : { currentStreak: 0, longestStreak: 0 };
       const totalMins = sessions.reduce((acc, s) => acc + (s.durationMinutes || s.duration || 0), 0);
       
-      const uniqueDays = new Set(sessions.map(s => {
-        const dateStr = s.date || s.createdAt;
-        return dateStr ? dateStr.split("T")[0] : "";
-      })).size;
+      const uniqueDays = new Set(sessions.map(s => s.date || s.createdAt?.split("T")[0])).size;
 
       const last7 = Array.from({ length: 7 }).map((_, i) => {
         const d = new Date();
         d.setDate(d.getDate() - (6 - i));
-        const dateString = d.toISOString().split("T")[0];
+        
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const localDateString = `${year}-${month}-${day}`;
         
         const minutesOnDay = sessions
-          .filter(s => (s.date || s.createdAt)?.startsWith(dateString))
+          .filter(s => {
+            const sessionDate = s.date || s.createdAt?.split("T")[0];
+            return sessionDate === localDateString;
+          })
           .reduce((acc, s) => acc + (s.durationMinutes || s.duration || 0), 0);
 
         return {
@@ -129,9 +133,9 @@ export const Dashboard = observer(() => {
       });
 
       setKanbanStats({
-        aprender: kanbanMap['to_learn']?.length || 0,
-        praticando: kanbanMap['learning']?.length || 0,
-        dominada: kanbanMap['learned']?.length || 0,
+        aprender: kanbanMap['TO_LEARN']?.length || 0,
+        praticando: kanbanMap['LEARNING']?.length || 0,
+        dominada: kanbanMap['LEARNED']?.length || 0,
       });
 
       const target = 3;
@@ -350,13 +354,13 @@ export const Dashboard = observer(() => {
                         <div className="flex gap-2 mt-3 opacity-60 group-hover:opacity-100 transition-opacity">
                           <button
                             className="h-7 px-2 text-xs text-orange-500 hover:bg-orange-600/20 rounded transition-colors flex items-center gap-1"
-                            onClick={() => handleUpdateGoalStatus(g.id, "completed")}
+                            onClick={() => handleUpdateGoalStatus(g.id, "COMPLETED")}
                           >
                             <CheckOutlined fontSize="small" /> Concluir
                           </button>
                           <button
                             className="h-7 px-2 text-xs text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded transition-colors flex items-center gap-1"
-                            onClick={() => handleUpdateGoalStatus(g.id, "rejected")}
+                            onClick={() => handleUpdateGoalStatus(g.id, "REJECTED")}
                           >
                             <CloseOutlined fontSize="small" /> Recusar
                           </button>
