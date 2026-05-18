@@ -23,7 +23,6 @@ import {
   CloseOutlined,
   CheckCircleOutlineOutlined,
   AutoAwesomeOutlined,
-  FlagOutlined,
   MenuBookOutlined,
   EmojiEventsOutlined
 } from "@mui/icons-material";
@@ -326,7 +325,7 @@ export const Dashboard = observer(() => {
                     {goalsStats.activeGoals.map((g) => (
                       <div key={g.id} className="p-3 rounded-md bg-slate-900 border border-slate-700 hover:border-orange-500/30 transition-colors group">
                         <div className="flex items-start gap-2">
-                          <span className="text-orange-500 shrink-0 mt-0.5"><FlagOutlined fontSize="small" /></span>
+                          <span className="text-orange-500 shrink-0 mt-0.5"><TrackChangesOutlined fontSize="small" /></span>
                           <p className="text-sm text-slate-200 flex-1">{g.title}</p>
                         </div>
                         <div className="flex gap-2 mt-3 opacity-60 group-hover:opacity-100 transition-opacity">

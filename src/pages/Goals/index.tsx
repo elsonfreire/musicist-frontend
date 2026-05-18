@@ -5,7 +5,6 @@ import { Content } from "@/components/Layout/Content";
 
 import type { GoalResponse, GoalsState } from "./types";
 
-
 import { 
   TrackChangesOutlined,
   CheckOutlined, 
@@ -71,7 +70,6 @@ export const Goals = observer(() => {
 
   const handleUpdateStatus = async (id: string, newStatus: "COMPLETED" | "REJECTED") => {
     const token = localStorage.getItem("token");
-    
     const goalToMove = state.activeGoals.find(g => g.id === id);
     if (!goalToMove) return;
 
@@ -125,7 +123,7 @@ export const Goals = observer(() => {
                 Metas da Semana
               </h1>
               <p className="text-sm text-slate-400 mt-0.5">
-                Sugestões personalizadas para impulsionar sua evolução
+                Sugestões personalizadas do Gemini para impulsionar sua evolução
               </p>
             </div>
           </div>
@@ -154,7 +152,7 @@ export const Goals = observer(() => {
                 </div>
 
                 {weeklyGoalAchieved && (
-                  <div className="mb-4 p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-sm text-center flex items-center justify-center gap-2 text-green-400">
+                  <div className="mb-4 p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-sm text-center flex items-center justify-center gap-2 text-green-400 animate-fade-in">
                     <CheckCircleOutlineOutlined className="text-green-400" fontSize="small" />
                     Objetivo da semana cumprido! Parabéns!
                   </div>
@@ -165,7 +163,7 @@ export const Goals = observer(() => {
                     <div className="flex flex-col items-center justify-center py-6 text-slate-500 gap-2">
                       <AutoAwesomeOutlined className="text-orange-500/50 animate-pulse" />
                       <p className="text-xs italic text-center max-w-sm">
-                        Gerando novos desafios baseados no seu instrumento e nível...
+                        O Gemini está gerando novos desafios baseados no seu instrumento e nível...
                       </p>
                     </div>
                   )}
@@ -204,9 +202,8 @@ export const Goals = observer(() => {
                   ))}
                 </div>
               </div>
-
               {state.completedGoals.length > 0 && (
-                <div className="bg-slate-800 border border-slate-700/60 rounded-xl p-5 md:p-6 shadow-md">
+                <div className="bg-slate-800 border border-slate-700/60 rounded-xl p-5 md:p-6 shadow-md animate-fade-in">
                   <h2 className="text-base md:text-lg font-display font-semibold mb-4 text-slate-200">
                     Concluídas esta semana
                   </h2>
