@@ -11,14 +11,14 @@ import { useNavigate } from "react-router";
 import type { PracticeLog } from "./types";
 
 const instruments: Record<string, string> = {
-  "Guitarra": "electric_guitar",
-  "Piano": "piano",
-  "Baixo": "bass",
-  "Bateria": "drums",
-  "Violão": "guitar",
-  "Violino": "violin", 
-  "Outro": "other"
-}
+  "Guitarra": "ELECTRIC_GUITAR",
+  "Piano": "PIANO",
+  "Baixo": "BASS",
+  "Bateria": "DRUMS",
+  "Violão": "GUITAR",
+  "Violino": "VIOLIN", 
+  "Outro": "OTHER"
+};
 
 export const Practice = () => {
   const navigate = useNavigate();
