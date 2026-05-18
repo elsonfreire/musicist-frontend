@@ -53,7 +53,6 @@ export const Dashboard = observer(() => {
     activeGoals: [],
     weeklyTarget: 3,
     weeklyCompletedCount: 0,
-    canGenerateMore: true,
   });
 
   const getCurrentUserId = () => {
@@ -68,7 +67,7 @@ export const Dashboard = observer(() => {
     }
   };
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (silent = false) => {
     const token = localStorage.getItem("token");
     const userId = getCurrentUserId();
 
@@ -78,7 +77,7 @@ export const Dashboard = observer(() => {
     }
 
     const headers = { "Authorization": `Bearer ${token}` };
-    setIsLoading(true);
+    if (!silent) setIsLoading(true);
 
     try {
       const [sessionsRes, kanbanRes, goalsRes, streakRes] = await Promise.all([
@@ -99,7 +98,6 @@ export const Dashboard = observer(() => {
       const pendingGoals: GoalResponse[] = goalsRes.ok ? await goalsRes.json() : [];
       const streakData: StreakResponse = streakRes.ok ? await streakRes.json() : { currentStreak: 0, longestStreak: 0 };
       const totalMins = sessions.reduce((acc, s) => acc + (s.durationMinutes || s.duration || 0), 0);
-      
       const uniqueDays = new Set(sessions.map(s => s.date || s.createdAt?.split("T")[0])).size;
 
       const last7 = Array.from({ length: 7 }).map((_, i) => {
@@ -148,13 +146,12 @@ export const Dashboard = observer(() => {
         })),
         weeklyTarget: target,
         weeklyCompletedCount: completed,
-        canGenerateMore: pendingGoals.length === 0,
       });
 
     } catch (err) {
       console.error("Erro ao buscar dados da dashboard:", err);
     } finally {
-      setIsLoading(false);
+      if (!silent) setIsLoading(false);
     }
   };
 
@@ -162,8 +159,17 @@ export const Dashboard = observer(() => {
     fetchDashboardData();
   }, []);
 
-  const handleUpdateGoalStatus = async (id: string, newStatus: string) => {
+  const handleUpdateGoalStatus = async (id: string, newStatus: "COMPLETED" | "REJECTED") => {
     const token = localStorage.getItem("token");
+    setGoalsStats(prev => {
+      const updatedGoals = prev.activeGoals.filter(g => g.id !== id);
+      return {
+        ...prev,
+        activeGoals: updatedGoals,
+        weeklyCompletedCount: Math.min(prev.weeklyTarget, prev.weeklyCompletedCount + (newStatus === "COMPLETED" ? 1 : 0))
+      };
+    });
+
     try {
       const res = await fetch(`${API_URL}/goals/${id}`, {
         method: "PUT",
@@ -175,29 +181,11 @@ export const Dashboard = observer(() => {
       });
       
       if (res.ok) {
-        fetchDashboardData();
+        fetchDashboardData(true);
       }
     } catch (err) {
       console.error("Erro ao atualizar meta", err);
-    }
-  };
-
-  const handleGenerateGoals = async () => {
-    const token = localStorage.getItem("token");
-    setIsLoading(true); 
-    try {
-      const res = await fetch(`${API_URL}/goals/reset`, {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      
-      if (res.ok || res.status === 204) {
-        fetchDashboardData();
-      }
-    } catch (err) {
-      console.error("Erro ao gerar metas", err);
-    } finally {
-      setIsLoading(false);
+      fetchDashboardData();
     }
   };
 
@@ -297,6 +285,7 @@ export const Dashboard = observer(() => {
                     })}
                   </div>
                 </div>
+
                 <div className="bg-slate-800 rounded-lg p-4 md:p-6">
                   <div className="flex items-center justify-between mb-3">
                     <h2 className="text-base md:text-lg font-display font-semibold text-slate-200 flex items-center gap-2">
@@ -304,15 +293,15 @@ export const Dashboard = observer(() => {
                       Metas da Semana
                     </h2>
                     <span className="text-xs text-slate-400">
-                      {weeklyGoalAchieved
-                        ? `${goalsStats.weeklyCompletedCount} concluídas`
+                      {goalsStats.activeGoals.length === 0 
+                        ? "Atualizando metas..." 
                         : `${goalsStats.weeklyCompletedCount}/${goalsStats.weeklyTarget}`}
                     </span>
                   </div>
                   
                   <div className="h-1.5 w-full rounded-full bg-slate-900 overflow-hidden mb-5">
                     <div
-                      className="h-full bg-orange-600 transition-all"
+                      className="h-full bg-orange-600 transition-all duration-300"
                       style={{ width: `${progressPercent}%` }}
                     />
                   </div>
@@ -325,27 +314,16 @@ export const Dashboard = observer(() => {
                   )}
 
                   <div className="space-y-3">
-                    {goalsStats.activeGoals.length === 0 && !goalsStats.canGenerateMore && (
-                      <p className="text-sm text-slate-400 text-center py-4">
-                        Todas as metas concluídas!
-                      </p>
-                    )}
-                    
-                    {goalsStats.canGenerateMore && (
-                      <div className="text-center py-2">
-                        <p className="text-sm text-slate-400 mb-3">
-                          Quer ir além? Gere novas metas usando IA.
+                    {goalsStats.activeGoals.length === 0 && (
+                      <div className="flex flex-col items-center justify-center py-6 text-slate-500 gap-2">
+                        <CircularProgress color="inherit" size={20} />
+                        <p className="text-xs italic text-center">
+                          Gerando novos desafios musicais...
                         </p>
-                        <button
-                          onClick={handleGenerateGoals}
-                          className="font-medium border border-orange-600 text-orange-500 bg-transparent hover:bg-orange-600 hover:text-white transition-colors inline-flex items-center justify-center gap-2 rounded-md text-xs h-8 px-4"
-                        >
-                          Gerar novas metas
-                        </button>
                       </div>
                     )}
 
-                    {goalsStats.activeGoals.map((g: any) => (
+                    {goalsStats.activeGoals.map((g) => (
                       <div key={g.id} className="p-3 rounded-md bg-slate-900 border border-slate-700 hover:border-orange-500/30 transition-colors group">
                         <div className="flex items-start gap-2">
                           <span className="text-orange-500 shrink-0 mt-0.5"><FlagOutlined fontSize="small" /></span>

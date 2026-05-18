@@ -26,7 +26,6 @@ export interface GoalsStats {
   activeGoals: DashboardGoal[];
   weeklyTarget: number;
   weeklyCompletedCount: number;
-  canGenerateMore: boolean;
 }
 
 export interface SessionResponse {
@@ -40,7 +39,7 @@ export interface SessionResponse {
 export interface GoalResponse {
   id: string;
   title: string;
-  status: "pending" | "completed" | "rejected" | "expired";
+  status: "PENDING" | "COMPLETED" | "REJECTED" | "EXPIRED";
 }
 
 export interface StreakResponse {
