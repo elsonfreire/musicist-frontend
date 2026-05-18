@@ -7,6 +7,7 @@ import { Login } from "@/pages/Login";
 import { Community } from "@/pages/Community";
 import { EditUser } from "@/pages/EditUser";
 import { Forum } from "@/pages/Forum";
+import { Goals } from "@/pages/Goals";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: "/practice",
     element: <Practice />,
+  },
+  {
+    path: "/goals", 
+    element: <Goals />,
   },
   {
     path: "/community",
