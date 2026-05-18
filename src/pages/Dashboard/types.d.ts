@@ -1,4 +1,3 @@
-// Tipagens para os estados locais da tela
 export interface PracticeDayInfo {
   day: string;
   minutes: number;
@@ -21,7 +20,6 @@ export interface KanbanStats {
 export interface DashboardGoal {
   id: string;
   title: string;
-  icon: string;
 }
 
 export interface GoalsStats {
@@ -31,7 +29,6 @@ export interface GoalsStats {
   canGenerateMore: boolean;
 }
 
-// Tipagens para os retornos das APIs
 export interface SessionResponse {
   id: string;
   durationMinutes?: number;

@@ -22,7 +22,10 @@ import {
   CheckOutlined,
   CloseOutlined,
   CheckCircleOutlineOutlined,
-  AutoAwesomeOutlined 
+  AutoAwesomeOutlined,
+  FlagOutlined,
+  MenuBookOutlined,
+  EmojiEventsOutlined
 } from "@mui/icons-material";
 import { CircularProgress } from "@mui/material";
 
@@ -137,8 +140,7 @@ export const Dashboard = observer(() => {
       setGoalsStats({
         activeGoals: pendingGoals.map(g => ({
           id: g.id,
-          title: g.title,
-          icon: "🎯"
+          title: g.title
         })),
         weeklyTarget: target,
         weeklyCompletedCount: completed,
@@ -314,14 +316,14 @@ export const Dashboard = observer(() => {
                   {weeklyGoalAchieved && (
                     <div className="mb-4 p-2 rounded-md bg-green-500/10 border border-green-500/20 text-xs text-center flex items-center justify-center gap-1 text-green-400">
                       <CheckCircleOutlineOutlined fontSize="small" />
-                      Objetivo da semana cumprido! 🎉
+                      Objetivo da semana cumprido!
                     </div>
                   )}
 
                   <div className="space-y-3">
                     {goalsStats.activeGoals.length === 0 && !goalsStats.canGenerateMore && (
                       <p className="text-sm text-slate-400 text-center py-4">
-                        Todas as metas concluídas! 🎵
+                        Todas as metas concluídas!
                       </p>
                     )}
                     
@@ -339,10 +341,10 @@ export const Dashboard = observer(() => {
                       </div>
                     )}
 
-                    {goalsStats.activeGoals.map((g) => (
+                    {goalsStats.activeGoals.map((g: any) => (
                       <div key={g.id} className="p-3 rounded-md bg-slate-900 border border-slate-700 hover:border-orange-500/30 transition-colors group">
                         <div className="flex items-start gap-2">
-                          <span className="text-base shrink-0">{g.icon}</span>
+                          <span className="text-orange-500 shrink-0 mt-0.5"><FlagOutlined fontSize="small" /></span>
                           <p className="text-sm text-slate-200 flex-1">{g.title}</p>
                         </div>
                         <div className="flex gap-2 mt-3 opacity-60 group-hover:opacity-100 transition-opacity">
@@ -380,15 +382,15 @@ export const Dashboard = observer(() => {
                 </div>
                 <div className="grid grid-cols-3 gap-3 md:gap-4">
                   <div className="text-center p-4 rounded-md bg-slate-900 border border-slate-700">
-                    <p className="text-xs md:text-sm text-slate-400 mb-1">📚 Aprender</p>
+                    <p className="text-xs md:text-sm text-slate-400 mb-1 flex items-center justify-center gap-1"><MenuBookOutlined fontSize="inherit" /> Aprender</p>
                     <p className="text-2xl font-bold text-slate-200">{kanbanStats.aprender}</p>
                   </div>
                   <div className="text-center p-4 rounded-md bg-slate-900 border border-slate-700">
-                    <p className="text-xs md:text-sm text-slate-400 mb-1">🎸 Praticando</p>
+                    <p className="text-xs md:text-sm text-slate-400 mb-1 flex items-center justify-center gap-1"><MusicNoteOutlined fontSize="inherit" /> Praticando</p>
                     <p className="text-2xl font-bold text-slate-200">{kanbanStats.praticando}</p>
                   </div>
                   <div className="text-center p-4 rounded-md bg-slate-900 border border-slate-700">
-                    <p className="text-xs md:text-sm text-slate-400 mb-1">🏆 Dominada</p>
+                    <p className="text-xs md:text-sm text-slate-400 mb-1 flex items-center justify-center gap-1"><EmojiEventsOutlined fontSize="inherit" /> Dominada</p>
                     <p className="text-2xl font-bold text-slate-200">{kanbanStats.dominada}</p>
                   </div>
                 </div>
