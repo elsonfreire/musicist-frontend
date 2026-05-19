@@ -1,4 +1,4 @@
-import type { ForumCategoryType } from "@/pages/Forum/types";
+import type { ForumCategoryType } from "./types"; 
 
 export const MAX_COMMENT_LENGTH = 500;
 export const MAX_TITLE_LENGTH = 120;

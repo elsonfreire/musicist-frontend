@@ -21,20 +21,12 @@ export const Forum = observer(() => {
   const [topics, setTopics] = useState<TopicResponse[]>([]);
   const [isLoadingTopics, setIsLoadingTopics] = useState(true);
 
-  const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [commentsMap, setCommentsMap] = useState<
-    Record<number, CommentResponse[]>
-  >({});
-  const [loadingComments, setLoadingComments] = useState<
-    Record<number, boolean>
-  >({});
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [commentsMap, setCommentsMap] = useState<Record<string, CommentResponse[]>>({});
+  const [loadingComments, setLoadingComments] = useState<Record<string, boolean>>({});
 
-  const [commentDrafts, setCommentDrafts] = useState<Record<number, string>>(
-    {},
-  );
-  const [submittingComment, setSubmittingComment] = useState<
-    Record<number, boolean>
-  >({});
+  const [commentDrafts, setCommentDrafts] = useState<Record<string, string>>({});
+  const [submittingComment, setSubmittingComment] = useState<Record<string, boolean>>({});
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -45,7 +37,7 @@ export const Forum = observer(() => {
     reset: resetTopic,
     watch: watchTopic,
     formState: { errors: topicErrors },
-  } = useForm<NewTopicFormData>({ defaultValues: { category: "tips" } });
+  } = useForm<NewTopicFormData>({ defaultValues: { category: "TIPS" } });
 
   const titleValue = watchTopic("title") || "";
   const contentValue = watchTopic("description") || "";
@@ -72,7 +64,7 @@ export const Forum = observer(() => {
     fetchTopics();
   }, [fetchTopics]);
 
-  const fetchComments = async (topicId: number) => {
+  const fetchComments = async (topicId: string) => {
     if (commentsMap[topicId]) return;
     setLoadingComments((prev) => ({ ...prev, [topicId]: true }));
     try {
@@ -89,14 +81,13 @@ export const Forum = observer(() => {
     }
   };
 
-  const toggleExpand = (topicId: number) => {
+  const toggleExpand = (topicId: string) => {
     setExpandedId((curr) => {
       const next = curr === topicId ? null : topicId;
       if (next !== null) fetchComments(next);
       return next;
     });
   };
-
 
   const handleCreateTopic = async (data: NewTopicFormData) => {
     if (!userState) return;
@@ -123,7 +114,7 @@ export const Forum = observer(() => {
     }
   };
 
-  const handleDeleteTopic = async (topicId: number) => {
+  const handleDeleteTopic = async (topicId: string) => {
     if (!userState) return;
     try {
       const res = await fetch(`${API}/forum/topics/${topicId}`, {
@@ -138,7 +129,7 @@ export const Forum = observer(() => {
     }
   };
 
-  const handleSubmitComment = async (topicId: number) => {
+  const handleSubmitComment = async (topicId: string) => {
     if (!userState) return;
     const text = (commentDrafts[topicId] || "").trim();
     if (!text || text.length > MAX_COMMENT_LENGTH) return;
@@ -206,7 +197,7 @@ export const Forum = observer(() => {
               const comments = commentsMap[topic.id] || [];
               const isLoadingCmt = loadingComments[topic.id];
               const draftValue = commentDrafts[topic.id] || "";
-              const isOwner = Number(userState.user?.id) === topic.user.id;
+              const isOwner = userState.user?.id === topic.user.id;
 
               return (
                 <div
