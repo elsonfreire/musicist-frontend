@@ -28,4 +28,4 @@ interface NewTopicFormData {
   category: ForumCategoryType;
 }
 
-export type ForumCategoryType = "tips" | "technical" | "social" | "theory" | "tools";
+export type ForumCategoryType = "TIPS" | "TECHNICAL" | "SOCIAL" | "THEORY" | "TOOLS";
