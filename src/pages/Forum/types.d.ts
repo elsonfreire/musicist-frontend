@@ -1,10 +1,10 @@
 export interface TopicResponse {
-  id: number;
+  id: string;
   title: string;
   category: ForumCategoryType;
   description: string;
   user: {
-    id: number;
+    id: string;
     username: string;
   };
   createdAt: string;
@@ -12,13 +12,13 @@ export interface TopicResponse {
 }
 
 export interface CommentResponse {
-  id: number;
+  id: string;
   content: string;
   author: {
-    id: number;
+    id: string;
     username: string;
   };
-  topicId: number;
+  topicId: string;
   createdAt: string;
 }
 
@@ -28,4 +28,4 @@ interface NewTopicFormData {
   category: ForumCategoryType;
 }
 
-export type ForumCategoryType = "tips" | "technical" | "social" | "theory" | "tools";
+export type ForumCategoryType = "TIPS" | "TECHNICAL" | "SOCIAL" | "THEORY" | "TOOLS";
