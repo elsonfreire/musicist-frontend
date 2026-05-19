@@ -8,6 +8,7 @@ import { Community } from "@/pages/Community";
 import { EditUser } from "@/pages/EditUser";
 import { Forum } from "@/pages/Forum";
 import { Goals } from "@/pages/Goals";
+  import { Repertoire } from "@/pages/Repertoire"; 
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
   {
     path: "/goals", 
     element: <Goals />,
+  },
+  {
+    path: "/repertoire",
+    element: <Repertoire />,
   },
   {
     path: "/community",
